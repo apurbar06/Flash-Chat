@@ -1,5 +1,7 @@
 package com.example.myflashchat;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -134,9 +136,15 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d(TAG, "onComplete: " + task.isSuccessful());
+
                 if (!task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: user creation faild.");
+                    Log.d(TAG, "onComplete: user creation failed.");
                     showErrorDialogue("Registration attempt failed");
+                } else {
+                    saveDisplayName();
+                    Intent intent = new Intent(RegisterActivity.this, MainChatActivity.class);
+                    finish();
+                    startActivity(intent);
                 }
             }
         });
@@ -145,6 +153,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     // TODO: Save the display name to Shared Preferences
+    private void saveDisplayName() {
+        String displayName = mUsernameView.getText().toString();
+        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
+        prefs.edit().putString(DISPLAY_NAME_KEY, displayName).apply();
+    }
 
 
     // TODO: Create an alert dialog to show in case registration failed
