@@ -2,16 +2,25 @@ package com.example.myflashchat;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class RegisterActivity extends AppCompatActivity {
+    private static final String TAG = "RegisterActivity";
 
     // Constants
     public static final String CHAT_PREFS = "ChatPrefs";
@@ -25,6 +34,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mConfirmPasswordView;
 
     // Firebase instance variables
+    private FirebaseAuth mAuth;
+
 
 
 
@@ -51,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         // TODO: Get hold of an instance of FirebaseAuth
-
+        mAuth = FirebaseAuth.getInstance();
 
     }
 
@@ -97,6 +108,8 @@ public class RegisterActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // TODO: Call create FirebaseUser() here
+            Log.d(TAG, "attemptRegistration: createFirebaseUser() is called");
+            createFirebaseUser();
 
         }
     }
@@ -108,10 +121,25 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Add own logic to check for a valid password (minimum 6 characters)
-        return true;
+        String conformPassword = mConfirmPasswordView.getText().toString();
+        return conformPassword.equals(password) && password.length() > 4;
     }
 
     // TODO: Create a Firebase user
+    private void createFirebaseUser() {
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG, "onComplete: " + task.isSuccessful());
+                if (!task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: user creation faild.");
+                }
+            }
+        });
+
+    }
 
 
     // TODO: Save the display name to Shared Preferences
