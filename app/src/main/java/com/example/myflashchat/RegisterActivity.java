@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -135,6 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.d(TAG, "onComplete: " + task.isSuccessful());
                 if (!task.isSuccessful()) {
                     Log.d(TAG, "onComplete: user creation faild.");
+                    showErrorDialogue("Registration attempt failed");
                 }
             }
         });
@@ -146,6 +148,15 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     // TODO: Create an alert dialog to show in case registration failed
+    private void showErrorDialogue(String message) {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Oops")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
 
 
 
