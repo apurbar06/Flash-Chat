@@ -74,6 +74,13 @@ public class MainChatActivity extends AppCompatActivity {
     private void sendMessage() {
         Log.d(TAG, "sendMessage: message sent.");
         // TODO: Grab the text the user typed in and push the message to Firebase
+        String input = mInputText.getText().toString();
+        if (!input.equals("")) {
+            InstanceMessage chat = new InstanceMessage(input, mDisplayName);
+            Log.d(TAG, "sendMessage: " + chat.getAuthor());
+            mDatabaseReference.child("message").push().setValue(chat);
+            mInputText.setText("");
+        }
 
     }
 
